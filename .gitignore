@@ -8,3 +8,6 @@ data/image_data/test/
 data/HWDB1.1trn_gnt
 data/HWDB1.1tst_gnt
 
+__pycache__/
+.idea/
+
