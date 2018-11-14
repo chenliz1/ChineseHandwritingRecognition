@@ -13,7 +13,8 @@ import pickle as pkl
 import warnings
 warnings.filterwarnings("ignore")
 
-plt.ion()   # interactive mode
+# plt.ion()   # interactive mode
+# plt.interactive(False)
 
 class HanziTrainingDataset(Dataset):
 
@@ -22,20 +23,42 @@ class HanziTrainingDataset(Dataset):
             self.charDict = pkl.load(handler)
         self.rootDir = rootDir
         self.sampleNumList = np.zeros(len(self.charDict))
-
+        self.sampleFilesDict = {}
+        self.transform = transform
         for c in range(len(self.charDict)):
             samplesPath = os.path.join(self.rootDir, '{:05}'.format(c))
-            self.sampleNumList[c] = np.int(len(os.listdir(samplesPath)))
+            self.sampleFilesDict[c] = []
+
+            for files in os.listdir(samplesPath):
+                if files.endswith(".png"):
+                    self.sampleFilesDict[c].append(files)
+
+            self.sampleNumList[c] = np.int(len(self.sampleFilesDict[c]))
         self.sampleCumList = np.int32(np.cumsum(self.sampleNumList))
 
     def __len__self(self):
         return self.sampleCumList[-1]
 
-    def __getitem__(self):
+    def __getitem__(self, idx):
+        label = (self.sampleCumList < idx).sum()
+        labelPath = '{:05}'.format(label)
+        if label > 0:
+            index = idx - self.sampleCumList[label-1]
+        else:
+            index = idx
+        fileIndex = self.sampleFilesDict[label][index]
+        print(fileIndex)
+        imgName = os.path.join(self.rootDir, labelPath, fileIndex)
+        image = io.imread(imgName)
+        sample = {'image': image, 'label': label}
 
-        sample = {}
+        if self.transform:
+            sample = self.transform(sample)
 
         return sample
 trainDataset = HanziTrainingDataset(rootDir='./data/image_data/train', charDictDir='./data/char_dict')
-print(len(trainDataset.charDict))
-print(trainDataset.sampleCumList[-1])
+
+print(trainDataset[8995]['label'])
+
+plt.imshow(trainDataset[8995]['image'])
+plt.show()
