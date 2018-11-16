@@ -3,8 +3,8 @@ from PIL import ImageTk, Image, ImageDraw
 import PIL
 from tkinter import *
 
-width = 500
-height = 500
+width = 96
+height = 96
 center = height//2
 white = (255, 255, 255)
 
@@ -19,9 +19,12 @@ def paint(event):
     cv.create_oval(x1, y1, x2, y2, fill="black",width=2)
     draw.line([x1, y1, x2, y2],fill="black",width=2)
 
+def delete():
+    cv.delete("all")
+
 root = Tk()
 
-# Tkinter create a canvas to draw on
+# create the canvas with specified width and height
 cv = Canvas(root, width=width, height=height, bg='white')
 cv.pack()
 
@@ -42,6 +45,8 @@ cv.bind("<B1-Motion>", paint)
 # PIL image can be saved as .png .jpg .gif or .bmp file (among others)
 # filename = "my_drawing.png"
 # image1.save(filename)
-button=Button(text="save",command=save)
-button.pack()
+button_save=Button(text="save",command=save)
+button_delete=Button(text="clear",command=delete)
+button_save.pack()
+button_delete.pack()
 root.mainloop()
