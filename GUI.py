@@ -2,15 +2,26 @@
 from PIL import ImageTk, Image, ImageDraw
 import PIL
 from tkinter import *
+import cv2
 
-width = 96
-height = 96
+width = 300
+height = 300
 center = height//2
 white = (255, 255, 255)
 
-def save():
+# crop
+# change to grayscale
+def preprocess(image, size=100):
+    input_img = cv2.imread("image.png")
+    # change to grayscale
+    input_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# ready to pass the image to the next function (probably our model)
+def detect():
     filename = "image.png"
     image1.save(filename)
+    preprocess(image1, 10)
+    # pass to our model
 
 def paint(event):
     # python_green = "#476042"
@@ -45,8 +56,10 @@ cv.bind("<B1-Motion>", paint)
 # PIL image can be saved as .png .jpg .gif or .bmp file (among others)
 # filename = "my_drawing.png"
 # image1.save(filename)
-button_save=Button(text="save",command=save)
+
+button_save=Button(text="detect",command=detect)
 button_delete=Button(text="clear",command=delete)
+
 button_save.pack()
 button_delete.pack()
 root.mainloop()
