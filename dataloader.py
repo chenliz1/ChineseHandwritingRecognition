@@ -5,11 +5,11 @@ import pandas as pd
 from skimage import io, transform
 import numpy as np
 import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
 import pickle as pkl
 
 from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import Sequence
+from skimage.transform import resize
 
 # Ignore warnings
 import warnings
@@ -18,7 +18,7 @@ warnings.filterwarnings("ignore")
 # plt.ion()   # interactive mode
 # plt.interactive(False)
 #
-# class HanziTrainingDataset(Dataset):
+# class HanziTrainingDataset(Sequence):
 #
 #     def __init__(self, rootDir, charDictDir, transform=None):
 #         with open(charDictDir, 'rb') as handler:
