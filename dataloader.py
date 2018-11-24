@@ -66,10 +66,6 @@ warnings.filterwarnings("ignore")
 # plt.show()
 
 
-# with open('./data/char_dict', 'rb') as handler:
-#     charDict = pkl.load(handler)
-# classSize = len(charDict)
-
 
 class validGenerator(keras.utils.Sequence):
 

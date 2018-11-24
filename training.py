@@ -18,9 +18,7 @@ rootDir='./data/image_data'
 trainDir = os.path.join(rootDir, 'train')
 validDir = os.path.join(rootDir, 'test')
 
-with open('./data/char_dict', 'rb') as handler:
-    charDict = pkl.load(handler)
-classSize = len(charDict)
+classSize = 500
 
 batchSize = 128
 val_batchSize = 128

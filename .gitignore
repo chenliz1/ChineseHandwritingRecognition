@@ -5,6 +5,8 @@
 # ignore all files in these directories
 data/image_data/train/
 data/image_data/test/
+data/image_data_3755/train/
+data/image_data_3755/test/
 data/HWDB1.1trn_gnt
 data/HWDB1.1tst_gnt
 

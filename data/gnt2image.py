@@ -7,7 +7,7 @@ from PIL import Image
 data_dir = './'
 train_data_dir = os.path.join(data_dir, 'HWDB1.1trn_gnt')
 test_data_dir = os.path.join(data_dir, 'HWDB1.1tst_gnt')
-
+freq500Words = np.load('./MostFreq500inHWDB1.1.npy')
 
 def read_from_gnt_dir(gnt_dir=train_data_dir):
     def one_file(f):
@@ -44,17 +44,23 @@ train_counter = 0
 test_counter = 0
 for image, tagcode in read_from_gnt_dir(gnt_dir=train_data_dir):
     tagcode_unicode = struct.pack('>H', tagcode).decode('gb2312')
-    im = Image.fromarray(image)
-    dir_name = './image_data/train/' + '%0.5d'%char_dict[tagcode_unicode]
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-    im.convert('RGB').save(dir_name+'/' + str(train_counter) + '.png')
-    train_counter += 1
+    label = char_dict[tagcode_unicode]
+    if freq500Words[label] == 1:
+        im = Image.fromarray(image)
+        newLabel = freq500Words[:label+1].sum() - 1
+        dir_name = './image_data/train/' + '%0.5d'%newLabel
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+        im.convert('RGB').save(dir_name+'/' + str(train_counter) + '.png')
+        train_counter += 1
 for image, tagcode in read_from_gnt_dir(gnt_dir=test_data_dir):
     tagcode_unicode = struct.pack('>H', tagcode).decode('gb2312')
-    im = Image.fromarray(image)
-    dir_name = './image_data/test/' + '%0.5d'%char_dict[tagcode_unicode]
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-    im.convert('RGB').save(dir_name+'/' + str(test_counter) + '.png')
-    test_counter += 1
+    label = char_dict[tagcode_unicode]
+    if freq500Words[label] == 1:
+        im = Image.fromarray(image)
+        newLabel = freq500Words[:label+1].sum() - 1
+        dir_name = './image_data/test/' + '%0.5d'%newLabel
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+        im.convert('RGB').save(dir_name+'/' + str(test_counter) + '.png')
+        test_counter += 1

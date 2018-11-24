@@ -22,7 +22,7 @@ if __name__ == "__main__":
         if char in data_500:
             result[int(idx)] = 1
 
-    np.save("MostFreq500inHWDB1.1", result)
+    np.save("data/MostFreq500inHWDB1.1", result)
 
 
 
