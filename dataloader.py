@@ -1,15 +1,14 @@
 from __future__ import print_function, division
 import os
-import torch
-import pandas as pd
 from skimage import io, transform
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle as pkl
-
+import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import Sequence
 from skimage.transform import resize
+from scipy.ndimage import binary_dilation
 
 # Ignore warnings
 import warnings
@@ -72,31 +71,54 @@ warnings.filterwarnings("ignore")
 # classSize = len(charDict)
 
 
-def validGenerator(path, batchSize, width, height):
-    valid_datagen = ImageDataGenerator(rescale=1. / 255)
-
-    valid_generator = valid_datagen.flow_from_directory(
-        path,
-        target_size=(width, height),
-        batch_size=batchSize,
-        color_mode="grayscale",
-        class_mode='categorical')
-
-    return valid_generator
+class validGenerator(keras.utils.Sequence):
 
 
-def trainGenerator(path, batchSize, width, height):
-    train_datagen = ImageDataGenerator(
-        rescale=1. / 255,
-        rotation_range=5,
-        width_shift_range=0.05,
-        height_shift_range=0.05)
+    def __init__(self, path, batchSize, width, height):
 
-    train_generator = train_datagen.flow_from_directory(
-        path,
-        target_size=(width, height),
-        batch_size=batchSize,
-        color_mode="grayscale",
-        class_mode='categorical')
+        self.generator = ImageDataGenerator(rescale=1. / 255).flow_from_directory(
+                                path,
+                                target_size=(width, height),
+                                batch_size=batchSize,
+                                color_mode="grayscale",
+                                class_mode='categorical')
 
-    return train_generator
+        self.batch_size = batchSize
+
+    def __len__(self):
+        return len(self.generator)
+
+    def __getitem__(self, idx):
+        batch_x = self.generator[idx][0]
+        batch_x[batch_x<0.9] = 0
+        batch_y = self.generator[idx][1]
+
+        return batch_x, batch_y
+
+class trainGenerator(keras.utils.Sequence):
+
+
+    def __init__(self, path, batchSize, width, height):
+
+        self.generator = ImageDataGenerator(
+                            rescale=1. / 255,
+                            rotation_range=5,
+                            width_shift_range=0.05,
+                            height_shift_range=0.05).flow_from_directory(
+                                path,
+                                target_size=(width, height),
+                                batch_size=batchSize,
+                                color_mode="grayscale",
+                                class_mode='categorical')
+
+        self.batch_size = batchSize
+
+    def __len__(self):
+        return len(self.generator)
+
+    def __getitem__(self, idx):
+        batch_x = self.generator[idx][0]
+        # batch_x[batch_x<0.99] = 0
+        batch_y = self.generator[idx][1]
+
+        return batch_x, batch_y
