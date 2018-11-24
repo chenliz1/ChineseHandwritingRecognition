@@ -10,4 +10,5 @@ data/HWDB1.1tst_gnt
 
 __pycache__/
 .idea/
+.ipynb_checkpoints/
 
