@@ -70,7 +70,7 @@ warnings.filterwarnings("ignore")
 class validGenerator(keras.utils.Sequence):
 
 
-    def __init__(self, path, batchSize, width, height):
+    def __init__(self, path, batchSize, width, height, binary=False, thresh=0.9):
 
         self.generator = ImageDataGenerator(rescale=1. / 255).flow_from_directory(
                                 path,
@@ -80,13 +80,17 @@ class validGenerator(keras.utils.Sequence):
                                 class_mode='categorical')
 
         self.batch_size = batchSize
+        self.binary = binary
+        self.thresh = thresh
 
     def __len__(self):
         return len(self.generator)
 
     def __getitem__(self, idx):
         batch_x = self.generator[idx][0]
-        batch_x[batch_x<0.9] = 0
+        if self.binary:
+            batch_x[batch_x<=self.thresh] = 0
+            batch_x[batch_x>self.thresh] = 1
         batch_y = self.generator[idx][1]
 
         return batch_x, batch_y
@@ -94,7 +98,7 @@ class validGenerator(keras.utils.Sequence):
 class trainGenerator(keras.utils.Sequence):
 
 
-    def __init__(self, path, batchSize, width, height):
+    def __init__(self, path, batchSize, width, height, binary=False, thresh=0.9):
 
         self.generator = ImageDataGenerator(
                             rescale=1. / 255,
@@ -108,13 +112,17 @@ class trainGenerator(keras.utils.Sequence):
                                 class_mode='categorical')
 
         self.batch_size = batchSize
+        self.binary = binary
+        self.thresh = thresh
 
     def __len__(self):
         return len(self.generator)
 
     def __getitem__(self, idx):
         batch_x = self.generator[idx][0]
-        # batch_x[batch_x<0.99] = 0
+        if self.binary:
+            batch_x[batch_x<=self.thresh] = 0
+            batch_x[batch_x>self.thresh] = 1
         batch_y = self.generator[idx][1]
 
         return batch_x, batch_y
