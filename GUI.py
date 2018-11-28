@@ -4,9 +4,9 @@ import PIL
 from tkinter import *
 import cv2
 
-canvas_width = 300
-canvas_height = 300
-center = canvas_height//2
+canvas_width = 96
+canvas_height = 96
+center = canvas_height/2
 white = (255, 255, 255)
 
 # model import
@@ -34,7 +34,7 @@ from model_9_layer_GSLRE import build_model_GSLRE
 
 # preprocess to binary and reshape
 def preprocess(image):
-    input_img = cv2.imread("image.png")
+    input_img = cv2.imread("image.tiff")
     input_img = np.resize(input_img/255.0, (1,96,96,1))
 
     return input_img
@@ -42,11 +42,11 @@ def preprocess(image):
 
 # ready to pass the image to the next function (probably our model)
 def detect():
-    filename = "image.png"
+    filename = "image.tiff"
     image1.save(filename)
     input_img = preprocess(image1)
-    print(input_img)
     # pass to our model which has been loaded already
+    print(input_img.mean())
     result = test_model.predict(input_img, batch_size=1).reshape(classSize)
     index = result.argsort()[-8:][::-1]
     for i in index:
@@ -54,15 +54,15 @@ def detect():
 
 def paint(event):
     # python_green = "#476042"
-    x1, y1 = (event.x - 0.5), (event.y - 0.5)
-    x2, y2 = (event.x + 0.5), (event.y + 0.5)
-    cv.create_oval(x1, y1, x2, y2, fill="black",width=10)
-    draw.line([x1, y1, x2, y2],fill="black",width=10)
+    x1, y1 = (event.x - 2), (event.y - 2)
+    x2, y2 = (event.x + 2), (event.y + 2)
+    cv.create_oval(x1, y1, x2, y2, fill="black",width=3)
+    draw.line([x1, y1, x2, y2],fill="black",width=3)
 
 def delete():
     cv.delete("all")
-    os.remove("image.png")
-
+    os.remove("image.tiff")
+    image1 = PIL.Image.new("RGB", (canvas_width, canvas_height), white)
 
 if __name__ == "__main__":
 
