@@ -3,6 +3,9 @@
 *.png
 *.hdf5
 *.ini
+*.png
+*.jpg
+*.tiff
 
 # ignore all files in these directories
 data/image_data/train/
