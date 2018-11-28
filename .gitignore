@@ -1,6 +1,7 @@
 # ignore these type of files
 *.gnt
 *.png
+*.hdf5
 
 # ignore all files in these directories
 data/image_data/train/
