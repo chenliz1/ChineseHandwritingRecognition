@@ -16,3 +16,4 @@ data/HWDB1.1trn
 __pycache__/
 .idea/
 .ipynb_checkpoints/
+.DS_Store
