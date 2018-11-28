@@ -6,12 +6,13 @@ import cv2
 
 canvas_width = 96
 canvas_height = 96
-center = canvas_height/2
+center = canvas_height//2
 white = (255, 255, 255)
 
 # model import
 
 import numpy as np
+np.set_printoptions(threshold=np.nan)
 import matplotlib.pyplot as plt
 import pickle as pkl
 import os
@@ -34,15 +35,34 @@ from model_9_layer_GSLRE import build_model_GSLRE
 
 # preprocess to binary and reshape
 def preprocess(image):
-    input_img = cv2.imread("image.tiff")
-    input_img = np.resize(input_img/255.0, (1,96,96,1))
+    # only need 1 channel, range from 0 to 1
+    input_img = plt.imread("image.jpg")[:,:,0]//255.0
+    # the array looks right
+    count_0 = 0
+    count_1 = 0
+    for i in input_img:
+        for j in i:
+            if j == 0:
+                count_0 += 1
+            if j == 1:
+                count_1 += 1
+    print("1. num of 0/1:",count_0, count_1)
+    input_img = np.resize(input_img, (1,96,96,1))
 
+    count_0 = 0
+    count_1 = 0
+    for i in input_img[0]:
+        for j in i:
+            if j == 0:
+                count_0 += 1
+            if j == 1:
+                count_1 += 1
+    print("2. num of 0/1:", count_0, count_1)
+    
     return input_img
-
-
 # ready to pass the image to the next function (probably our model)
 def detect():
-    filename = "image.tiff"
+    filename = "image.jpg"
     image1.save(filename)
     input_img = preprocess(image1)
     # pass to our model which has been loaded already
@@ -54,8 +74,8 @@ def detect():
 
 def paint(event):
     # python_green = "#476042"
-    x1, y1 = (event.x - 2), (event.y - 2)
-    x2, y2 = (event.x + 2), (event.y + 2)
+    x1, y1 = (event.x - 1), (event.y - 1)
+    x2, y2 = (event.x + 1), (event.y + 1)
     cv.create_oval(x1, y1, x2, y2, fill="black",width=3)
     draw.line([x1, y1, x2, y2],fill="black",width=3)
 
