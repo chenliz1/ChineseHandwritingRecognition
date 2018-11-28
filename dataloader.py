@@ -1,15 +1,17 @@
 from __future__ import print_function, division
 import os
-from skimage import io, transform
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle as pkl
 import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import Sequence
-from skimage.transform import resize
+
 from scipy.ndimage import binary_dilation
 
+# from skimage import io, transform
+# from skimage.transform import resize
 # Ignore warnings
 import warnings
 warnings.filterwarnings("ignore")
