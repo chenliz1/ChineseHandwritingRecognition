@@ -1,3 +1,7 @@
+# TODO: delete the canvas content
+# TODO: be able to resize the canvas
+# TODO: gui on the given text (as button?, make some text input area)
+
 # gui import
 from PIL import ImageTk, Image, ImageDraw
 import PIL
@@ -58,7 +62,7 @@ def preprocess(image):
             if j == 1:
                 count_1 += 1
     print("2. num of 0/1:", count_0, count_1)
-    
+
     return input_img
 # ready to pass the image to the next function (probably our model)
 def detect():
@@ -81,7 +85,9 @@ def paint(event):
 
 def delete():
     cv.delete("all")
-    os.remove("image.tiff")
+    if os.path.isfile("image.jpg"):
+        os.remove("image.jpg")
+
     image1 = PIL.Image.new("RGB", (canvas_width, canvas_height), white)
 
 if __name__ == "__main__":
