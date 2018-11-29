@@ -2,6 +2,10 @@
 *.gnt
 *.png
 *.hdf5
+*.ini
+*.png
+*.jpg
+*.tiff
 
 # ignore all files in these directories
 data/image_data/train/
@@ -10,8 +14,9 @@ data/image_data_3755/train/
 data/image_data_3755/test/
 data/HWDB1.1trn_gnt
 data/HWDB1.1tst_gnt
+data/HWDB1.1trn
 
 __pycache__/
 .idea/
 .ipynb_checkpoints/
-
+.DS_Store
