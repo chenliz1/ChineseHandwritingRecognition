@@ -19,7 +19,9 @@ def binarify_sample(rescaled_image, threshold):
 
 def layer_predict(model, layername, data):
 	'''
+		For conv layers only.
 		data: with shape batch_size * 96 * 96 * 1
+		layername: start with (conv)
 	'''
 	intermediate_layer_model = Model(inputs=model.input,
 								 outputs=model.get_layer(layername).output)
