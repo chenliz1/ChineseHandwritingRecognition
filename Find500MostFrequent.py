@@ -1,6 +1,7 @@
 # find the most frequent 500 chars among 3755 chars
 # save as npy file
 import numpy as np
+import pickle as pkl
 
 if __name__ == "__main__":
     result = np.zeros(3755)
@@ -24,5 +25,17 @@ if __name__ == "__main__":
 
     np.save("data/MostFreq500inHWDB1.1", result)
 
+    with open('./data/char_dict', 'rb') as handler:
+        charDict = pkl.load(handler)
 
+    index_key_500 = {}
+    freq500Words = result
+
+    # save a dictionary for mapping class number to chinese characters for GUI
+    for key, value in charDict.items():
+        if freq500Words[value] == 1:
+            newLabel = np.int(freq500Words[:value+1].sum() - 1)
+            index_key_500[newLabel] = key
+    with open('./data/index_key_500.pickle', 'wb') as handler:
+            pkl.dump(index_key_500, handler, protocol=pkl.HIGHEST_PROTOCOL)
 

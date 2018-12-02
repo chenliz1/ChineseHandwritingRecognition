@@ -14,32 +14,50 @@ from dataloader import trainGenerator, validGenerator
 from model_9_layer_GSLRE import build_model_GSLRE
 
 
-rootDir='./data/image_data'
-trainDir = os.path.join(rootDir, 'train')
-validDir = os.path.join(rootDir, 'test')
+def training_loop(model, train_data, valid_data, weights_path, history_path, epoch=50):
+	'''
+		epoch： must be a multiple of 10
 
-classSize = 500
+	'''
+	tg = train_data
+	vg = valid_data
+	checkpointer = keras.callbacks.ModelCheckpoint(filepath=weights_path,
+											   verbose = 0, save_best_only=True, monitor='val_acc')
 
-batchSize = 128
-val_batchSize = 128
-width, height = 96, 96
+	record = {'acc': [], 'val_acc':[], 'loss':[], 'val_loss':[]}
+	
+	for i in range(epoch//10):
+		tens = i + 1
+		Lrate = 0.1**tens
+		sgd = optimizers.SGD(lr=Lrate, momentum=0.9, nesterov=True)
+		model.compile(loss='categorical_crossentropy',
+				optimizer=sgd,
+				metrics=['accuracy'])
+		history = model.fit_generator(tg, epochs=10, verbose=1,
+							validation_data=vg,
+							callbacks=[checkpointer])
 
-vg = validGenerator(validDir, val_batchSize, 96, 96)
-tg = trainGenerator(trainDir, batchSize, 96, 96)
+		record['acc'] += history.history['acc']
+		record['val_acc'] += history.history['val_acc']
+		record['loss'] += history.history['loss']
+		record['val_loss'] += history.history['val_loss']
 
-model = build_model_GSLRE(classSize)
+	with open(history_path, 'wb') as handler:
+		pkl.dump(record, handler, protocol=pkl.HIGHEST_PROTOCOL)
 
-sgd = optimizers.SGD(lr=0.1, momentum=0.9, decay=3.3e-7, nesterov=True)
-model.compile(loss='categorical_crossentropy',
-        optimizer='SGD',
-        metrics=['accuracy'])
 
-checkpointer = keras.callbacks.ModelCheckpoint(filepath='model.weights.best.hdf5',
-                                               verbose = 0, save_best_only=True, monitor='val_acc')
-# sgd = SGD(lr=0.1, decay=0, momentum=0.9, nesterov=True)
-# K.set_value(sgd.lr, 0.5 * K.get_value(sgd.lr))
 
-model.fit_generator(tg, epochs=1, verbose=1,
-                    validation_data=vg,
-                    callbacks=[checkpointer],
-                    use_multiprocessing=True)
+def evaluation(model, weights_path, valid_data):
+
+	tg = train_data
+	vg = valid_data
+
+	model.load_weights(weights_path)
+	model.compile(loss='categorical_crossentropy',
+		optimizer='SGD',
+		metrics=['accuracy'])
+
+	test_loss, test_acc = test_model.evaluate_generator(vg, verbose=1)
+
+	return test_loss, test_acc
+
